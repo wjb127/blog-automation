@@ -1,0 +1,14 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+.env
+
+# 생성된 파일들
+blog_posts/
+blog_posts_html/
+blog_posts.json
+
+# IDE 설정
+.vscode/
+.idea/ 
