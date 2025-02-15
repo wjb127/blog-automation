@@ -1,0 +1,1 @@
+CreateObject("WScript.Shell").Run "run_blog_generation.bat", 0, True 
