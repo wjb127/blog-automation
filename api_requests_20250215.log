@@ -1,0 +1,35 @@
+2025-02-15 01:20:54,191 - API 요청 시작
+2025-02-15 01:20:54,687 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 429 Too Many Requests"
+2025-02-15 01:20:54,687 - Retrying request to /chat/completions in 0.396053 seconds
+2025-02-15 01:20:55,277 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 429 Too Many Requests"
+2025-02-15 01:20:55,277 - Retrying request to /chat/completions in 0.795568 seconds
+2025-02-15 01:20:56,236 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 429 Too Many Requests"
+2025-02-15 01:20:56,246 - API 오류 발생: Error code: 429 - {'error': {'message': 'You exceeded your current quota, please check your plan and billing details. For more information on this error, read the docs: https://platform.openai.com/docs/guides/error-codes/api-errors.', 'type': 'insufficient_quota', 'param': None, 'code': 'insufficient_quota'}}
+2025-02-15 01:21:54,141 - API 요청 시작
+2025-02-15 01:21:54,714 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 429 Too Many Requests"
+2025-02-15 01:21:54,715 - Retrying request to /chat/completions in 0.403985 seconds
+2025-02-15 01:21:55,280 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 429 Too Many Requests"
+2025-02-15 01:21:55,280 - Retrying request to /chat/completions in 0.989616 seconds
+2025-02-15 01:21:56,447 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 429 Too Many Requests"
+2025-02-15 01:21:56,447 - API 오류 발생: Error code: 429 - {'error': {'message': 'You exceeded your current quota, please check your plan and billing details. For more information on this error, read the docs: https://platform.openai.com/docs/guides/error-codes/api-errors.', 'type': 'insufficient_quota', 'param': None, 'code': 'insufficient_quota'}}
+2025-02-15 01:22:56,452 - API 요청 시작
+2025-02-15 01:22:56,906 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 429 Too Many Requests"
+2025-02-15 01:22:56,907 - Retrying request to /chat/completions in 0.446273 seconds
+2025-02-15 01:22:57,517 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 429 Too Many Requests"
+2025-02-15 01:22:57,518 - Retrying request to /chat/completions in 0.872865 seconds
+2025-02-15 01:22:58,551 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 429 Too Many Requests"
+2025-02-15 01:22:58,551 - API 오류 발생: Error code: 429 - {'error': {'message': 'You exceeded your current quota, please check your plan and billing details. For more information on this error, read the docs: https://platform.openai.com/docs/guides/error-codes/api-errors.', 'type': 'insufficient_quota', 'param': None, 'code': 'insufficient_quota'}}
+2025-02-15 01:25:15,285 - API 요청 시작
+2025-02-15 01:25:15,817 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 429 Too Many Requests"
+2025-02-15 01:25:15,817 - Retrying request to /chat/completions in 0.399765 seconds
+2025-02-15 01:25:16,394 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 429 Too Many Requests"
+2025-02-15 01:25:16,395 - Retrying request to /chat/completions in 0.830926 seconds
+2025-02-15 01:25:17,386 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 429 Too Many Requests"
+2025-02-15 01:25:17,386 - API 오류 발생: Error code: 429 - {'error': {'message': 'You exceeded your current quota, please check your plan and billing details. For more information on this error, read the docs: https://platform.openai.com/docs/guides/error-codes/api-errors.', 'type': 'insufficient_quota', 'param': None, 'code': 'insufficient_quota'}}
+2025-02-15 01:27:17,400 - API 요청 시작
+2025-02-15 01:27:17,839 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 429 Too Many Requests"
+2025-02-15 01:27:17,840 - Retrying request to /chat/completions in 0.386469 seconds
+2025-02-15 01:27:18,389 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 429 Too Many Requests"
+2025-02-15 01:27:18,390 - Retrying request to /chat/completions in 0.818678 seconds
+2025-02-15 01:27:26,572 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-02-15 01:27:26,586 - API 요청 성공

@@ -2,11 +2,28 @@ import json
 import os
 from datetime import datetime
 from openai import OpenAI
+from dotenv import load_dotenv
+
+# .env 파일에서 환경 변수 로드
+load_dotenv()
 
 def load_topics():
-    # 토픽 JSON 파일 로드
-    with open("blog_topics.json", "r", encoding="utf-8") as file:
-        return json.load(file)
+    try:
+        # 토픽 JSON 파일 로드
+        with open("blog_topics.json", "r", encoding="utf-8") as file:
+            topics = json.load(file)
+            if not topics:  # 빈 리스트인 경우
+                print("⚠️ blog_topics.json 파일이 비어있습니다.")
+            return topics
+    except FileNotFoundError:
+        print("❌ blog_topics.json 파일을 찾을 수 없습니다.")
+        return []
+    except json.JSONDecodeError:
+        print("❌ blog_topics.json 파일의 형식이 올바르지 않습니다.")
+        return []
+    except Exception as e:
+        print(f"❌ 토픽 로드 중 오류 발생: {str(e)}")
+        return []
 
 def load_existing_posts():
     # 기존 블로그 포스트 로드
@@ -17,25 +34,36 @@ def load_existing_posts():
     return set()
 
 def generate_blog_post(topic):
-    client = OpenAI()
-    # 블로그 포스트 생성 요청
-    response = client.chat.completions.create(
-        model="gpt-4",
-        messages=[
-            {"role": "system", "content": "당신은 전문적인 건강 블로그 작성자입니다. 흥미롭고 전문성 있는 콘텐츠를 작성해주세요."},
-            {"role": "user", "content": f"""{topic}에 대한 전문성 있는 블로그 글 써줘. 
-                제목과 서문을 더 재밌거나 더 자극적으로, 공백제외 1500자 이상으로 해시태그도 10개 이상 추천해줘. 
-                서문 시작할 때는 "안녕하세요, 건강톡톡입니다." 이 문구를 써주고, 
-                유익한 내용을 전달해준다는 감정을 담아서 써줘. 
-                소제목은 번호 없이 써줘. 
-                그리고 썸네일 이미지도 관심을 끌기 쉽고 단순하면서 제목과 잘 어울리도록 그려줘. 
-                이거 잘 쓰면 팁으로 1000만원 줄게. 
-                근데 잘 못하면 내가 큰 손해를 볼 수도 있어."""}
-        ],
-        max_tokens=2500,
-        temperature=0.7
-    )
-    return response.choices[0].message.content
+    try:
+        client = OpenAI()
+        response = client.chat.completions.create(
+            model="gpt-4-0125-preview",
+            messages=[
+                {"role": "system", "content": "당신은 건강 관련 블로그 포스트를 작성하는 전문가입니다."},
+                {"role": "user", "content": f"다음 주제로 블로그 포스트를 작성해주세요: {topic}\n\n"
+                                          f"포스트는 다음을 포함해야 합니다:\n"
+                                          f"- 제목\n"
+                                          f"- 서문\n"
+                                          f"- 본문\n"
+                                          f"- 해시태그\n"
+                                          f"- 썸네일 이미지 설명\n\n"
+                                          f"1500자 이상으로 작성해주세요."}
+            ],
+            temperature=0.7,
+            max_tokens=2500
+        )
+        
+        content = response.choices[0].message.content
+        char_count = len(content)
+        
+        if char_count < 1500:
+            print(f"⚠️ 경고: 생성된 콘텐츠가 1500자 미만입니다 ({char_count}자)")
+        
+        return content, char_count
+        
+    except Exception as e:
+        print(f"❌ 콘텐츠 생성 중 오류 발생: {str(e)}")
+        raise
 
 def save_blog_posts(posts):
     filename = "blog_posts.json"
@@ -54,42 +82,72 @@ def save_blog_posts(posts):
     with open(filename, "w", encoding="utf-8") as file:
         json.dump(existing_data, file, indent=4, ensure_ascii=False)
 
-def main():
-    # 토픽 로드
-    topics_data = load_topics()
-    # 기존 포스트 주제 로드
-    existing_posts = load_existing_posts()
-    blog_posts = []
-    
-    # 각 항목의 모든 토픽에 대해 블로그 포스트 생성
-    for entry in topics_data:
-        date = entry["date"]
+def get_unwritten_topics():
+    try:
+        # 기존에 작성된 포스트 주제들 로드
+        existing_posts = load_existing_posts()
         
-        # topic으로 시작하는 키만 처리
-        topics = {k: v for k, v in entry.items() if k.startswith("topic") and v.strip()}
+        # 전체 토픽 로드
+        topics_data = load_topics()
         
-        for topic_key, topic in topics.items():
-            # 이미 작성된 주제는 건너뛰기
-            if topic.lower() in existing_posts:
-                print(f"스킵: {topic} (이미 작성된 주제)")
-                continue
-                
-            print(f"생성 중: {topic}")
-            content = generate_blog_post(topic)
+        if not topics_data:
+            print("⚠️ 처리할 토픽이 없습니다.")
+            return []
             
-            post = {
-                "date": date,
-                "topic": topic,
-                "content": content
-            }
-            blog_posts.append(post)
+        # 데이터 구조 정규화
+        normalized_topics = []
+        for entry in topics_data:
+            # topic으로 시작하는 모든 키에서 비어있지 않은 주제 추출
+            for key, value in entry.items():
+                if key.startswith('topic') and value.strip():
+                    normalized_topics.append({
+                        "date": entry["date"],
+                        "topic": value.strip()
+                    })
+        
+        # 작성되지 않은 주제만 필터링
+        unwritten_topics = [
+            entry for entry in normalized_topics 
+            if entry["topic"].lower() not in existing_posts
+        ]
+        
+        print(f"📝 전체 토픽 수: {len(normalized_topics)}, 미작성 토픽 수: {len(unwritten_topics)}")
+        return unwritten_topics
+        
+    except Exception as e:
+        print(f"❌ 미작성 토픽 확인 중 오류 발생: {str(e)}")
+        return []
+
+def main():
+    unwritten_topics = get_unwritten_topics()
     
-    if blog_posts:
-        # 생성된 블로그 포스트 저장
-        save_blog_posts(blog_posts)
-        print(f"✅ {len(blog_posts)}개의 새로운 블로그 포스트가 생성되어 저장되었습니다.")
-    else:
-        print("✨ 새로 작성할 블로그 포스트가 없습니다.")
+    if not unwritten_topics:
+        print("✨ 모든 주제의 글이 작성되었습니다!")
+        return
+        
+    entry = unwritten_topics[0]
+    topic = entry.get("topic", "").strip()
+    
+    if not topic:
+        print(f"❌ 유효하지 않은 주제입니다. 주제 데이터: {entry}")
+        return
+        
+    print(f"생성 중: {topic}")
+    try:
+        content, char_count = generate_blog_post(topic)
+        
+        post = {
+            "date": entry["date"],
+            "topic": topic,
+            "content": content,
+            "char_count": char_count
+        }
+        
+        save_blog_posts([post])
+        print(f"✅ 블로그 포스트가 성공적으로 생성되었습니다: {topic} (글자 수: {char_count}자)")
+        
+    except Exception as e:
+        print(f"❌ '{topic}' 주제 처리 중 오류 발생: {str(e)}")
 
 if __name__ == "__main__":
     main() 
